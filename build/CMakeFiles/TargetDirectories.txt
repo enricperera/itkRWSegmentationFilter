@@ -1,3 +1,0 @@
-/home/enric/Documents/git/itkRWSegmentationFilter/build/CMakeFiles/rebuild_cache.dir
-/home/enric/Documents/git/itkRWSegmentationFilter/build/CMakeFiles/edit_cache.dir
-/home/enric/Documents/git/itkRWSegmentationFilter/build/CMakeFiles/mySegmentationProgram.dir
