@@ -193,6 +193,21 @@ namespace itk
 
     /////////////////////// Build Laplacian matrix /////////////////////////////
     
+    float spacingFactor = 0;
+    for (int i = 0 ; i != OutputImageType::ImageDimension ; ++i)
+    {
+      spacingFactor += pow( this->GetInput()->GetSpacing()[i] , 2 );
+    }
+    spacingFactor = sqrt(spacingFactor);
+
+    // Normalize intensity gradient over image spacing
+    std::vector< float > spacing;
+    typename InputImageType::SpacingType space = this->GetInput()->GetSpacing();
+    if ( OutputImageType::ImageDimension == 2 )
+      spacing = { spacingFactor/space[1] , spacingFactor/space[0] , spacingFactor/space[0] , spacingFactor/space[1] };
+    else if ( OutputImageType::ImageDimension == 3 )
+      spacing = { spacingFactor/space[2] , spacingFactor/space[1] , spacingFactor/space[0] , spacingFactor/space[0] , spacingFactor/space[1] , spacingFactor/space[2] };
+
     std::vector< int > neighbors;
     int x = regionCrop.GetSize()[0];
     int y = regionCrop.GetSize()[1];
@@ -219,15 +234,15 @@ namespace itk
           neighbors = { node-x , node-1 , node+1 , node+x };
         else if ( OutputImageType::ImageDimension == 3 )
           neighbors = { node-x*y , node-x , node-1 , node+1 , node+x , node+x*y };
-        for ( auto itNeighbors = neighbors.begin() ; itNeighbors != neighbors.end() ; ++itNeighbors )
+        for ( int i = 0 ; i != neighbors.size() ; ++i )
         {
           // Make sure all the neighbors computed fall within the bounding box dimension
-          if ( *itNeighbors >= 0 && *itNeighbors < totalNodes && labels.at( *itNeighbors ) == 0 )
+          if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes && labels.at( neighbors.at(i) ) == 0 )
           {
-            valNeighbor = nodes.at( *itNeighbors ); // Intensity of neighbor pixel
-            w = exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6; // Intensity gradient following a Gaussian function
+            valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
+            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
             //  Columns of BT correspond to marked nodes, rows to unmarked
-            BT.insert( *itNeighbors - previousFound.at( *itNeighbors ) , node - previousFound.at( node )) = -w; 
+            BT.insert( neighbors.at(i) - previousFound.at( neighbors.at(i) ) , node - previousFound.at( node )) = -w; 
           }          
         }
       }
@@ -258,15 +273,16 @@ namespace itk
         if ( OutputImageType::ImageDimension == 2 )
           neighbors = { node-x , node-1 , node+1 , node+x };
         else if ( OutputImageType::ImageDimension == 3 )
-          neighbors = { node-x*y , node-x , node-1 , node+1 , node+x , node+x*y };        for ( auto itNeighbors = neighbors.begin() ; itNeighbors != neighbors.end() ; ++itNeighbors )
+          neighbors = { node-x*y , node-x , node-1 , node+1 , node+x , node+x*y };        
+        for ( int i = 0 ; i != neighbors.size() ; ++i )
         {
           // Make sure all the neighbors computed fall within the bounding box dimension
-          if ( *itNeighbors >= 0 && *itNeighbors < totalNodes && labels.at( *itNeighbors ) != 0 )
+          if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes && labels.at( neighbors.at(i) ) != 0 )
           {
-            valNeighbor = nodes.at( *itNeighbors ); // Intensity of neighbor pixel
-            w = exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6; // Intensity gradient following a Gaussian function
+            valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
+            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
             //  Columns of BT correspond to marked nodes, rows to unmarked
-            BT.insert( node - previousFound.at( node ) , *itNeighbors - previousFound.at( *itNeighbors ) ) = -w; 
+            BT.insert( node - previousFound.at( node ) , neighbors.at(i) - previousFound.at( neighbors.at(i) ) ) = -w; 
           }          
         }
       }
@@ -295,18 +311,18 @@ namespace itk
         neighbors = { node-x , node-1 , node+1 , node+x };
       else if ( OutputImageType::ImageDimension == 3 )
         neighbors = { node-x*y , node-x , node-1 , node+1 , node+x , node+x*y };      degree = 0.0;
-      for ( auto itNeighbors = neighbors.begin() ; itNeighbors != neighbors.end() ; ++itNeighbors )
+      for ( int i = 0 ; i != neighbors.size() ; ++i  )
       {
         // Make sure all the neighbors computed fall within the bounding box dimension
-        if ( *itNeighbors >= 0 && *itNeighbors < totalNodes )
+        if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes )
         {
-          valNeighbor = nodes.at( *itNeighbors ); // Intensity of neighbor pixel
-          w = exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6; // Intensity gradient following a Gaussian function
+          valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
+            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
           degree += w; // Sum of the weights
           //  Columns of Lu correspond to unmarked nodes
-          if ( labels.at( *itNeighbors ) == 0) // If neighbor is an unmarked node, build Lu
+          if ( labels.at( neighbors.at(i) ) == 0) // If neighbor is an unmarked node, build Lu
           {
-            Lu.insert( node - previousFound.at( node ) , *itNeighbors - previousFound.at( *itNeighbors ) ) = -w; 
+            Lu.insert( node - previousFound.at( node ) , neighbors.at(i) - previousFound.at( neighbors.at(i) ) ) = -w; 
           }
         }          
       }
@@ -372,7 +388,7 @@ namespace itk
           maxLabelPos = j+1;
         }
       }
-      float lastLabelProbability = 1 - accumulatedProbability;
+      float lastLabelProbability = 0.95 - accumulatedProbability;
       if ( lastLabelProbability > maxProbability )
       {
         RWLabels.at(i) = nameLabels.back(); /* totalLabels */  // Make sure last label is background
