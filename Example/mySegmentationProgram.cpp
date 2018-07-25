@@ -56,7 +56,7 @@ int main( int argc, char *argv[] )
   RWFilter->SetLabelImage( readerLabel->GetOutput() );
   if (argv[4])
     RWFilter->SetBeta( atof(argv[4]) );
-  RWFilter->SetNumberOfThreads( 8 );
+  // RWFilter->SetNumberOfThreads( 8 );
   // RWFilter->SetWriteBackground( false );
 
   // Set writer and write image

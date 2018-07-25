@@ -385,20 +385,11 @@ namespace itk
         if ( probabilities.coeffRef(i,j) > maxProbability )
         {
           maxProbability = probabilities.coeffRef(i,j);
-          maxLabelPos = j+1;
+          maxLabelPos = j;
         }
       }
-      float lastLabelProbability = 0.95 - accumulatedProbability;
-      if ( lastLabelProbability > maxProbability )
-      {
-        RWLabels.at(i) = nameLabels.back(); /* totalLabels */  // Make sure last label is background
-      }
-      else
-      {
-        RWLabels.at(i) = nameLabels.at( maxLabelPos );
-      }
+      RWLabels.at(i) = 0.95 - accumulatedProbability > maxProbability ?  nameLabels.back() : nameLabels.at( maxLabelPos );
     }
-
     probabilities.resize(0,0);
 
     int valBackground;
