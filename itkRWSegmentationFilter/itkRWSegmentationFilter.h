@@ -31,7 +31,7 @@ namespace itk
   {
   public:
     /** Standard class typedefs. */
-    typedef RWSegmentationFilter                         Self;
+    typedef RWSegmentationFilter                            Self;
     typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
     typedef SmartPointer< Self >                            Pointer;
     typedef SmartPointer< const Self >                      ConstPointer;
@@ -46,46 +46,29 @@ namespace itk
     typedef TInputImage  InputImageType;
     typedef TOutputImage OutputImageType;
 
-    void SetLabelImage( typename OutputImageType::Pointer labelImage )
-    {
-      m_LabelImage = labelImage;
-    }
+    itkSetMacro(LabelImage, typename OutputImageType::Pointer);
+    itkGetMacro(LabelImage, typename OutputImageType::Pointer);
 
-    void SetBeta( double beta )
-    {
-      m_Beta = beta;
-    }
+    itkSetMacro(Beta, double);
+    itkGetMacro(Beta, double);
 
-    void SetNumberOfThreads( int threads )
-    {
-      m_NumThreads = threads;
-    }
+    itkSetMacro(NumberOfThreads, int);
+    itkGetMacro(NumberOfThreads, int);
 
-    void SetTolerance( double tol )
-    {
-      m_Tolerance = tol;
-    }
+    itkSetMacro(Tolerance, double);
+    itkGetMacro(Tolerance, double);
 
-    void SetMaximumNumberOfIterations( int maxIt )
-    {
-      m_MaximumNumberOfIterations = maxIt;
-    }
+    itkSetMacro(MaximumNumberOfIterations, int);
+    itkGetMacro(MaximumNumberOfIterations, int);
 
-    void SetWriteBackground( bool write )
-    {
-      m_WriteBackground = write;
-    }
+    itkSetMacro(WriteBackground, bool);
+    itkGetMacro(WriteBackground, bool);
+    itkBooleanMacro(WriteBackground);
 
   protected:
-    RWSegmentationFilter()
-    {
-      m_LabelImage = nullptr;
-      m_Beta = 1;
-      m_NumThreads = 1;
-      m_Tolerance = 1e-3;
-      m_MaximumNumberOfIterations = 100;
-      m_WriteBackground = true;
-    }
+    RWSegmentationFilter() :
+      m_LabelImage(nullptr), m_Beta(1), m_NumberOfThreads(1), m_Tolerance(1e-3),
+      m_MaximumNumberOfIterations(100), m_WriteBackground(true) {}
 
     virtual ~RWSegmentationFilter() {}
     void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
@@ -99,7 +82,7 @@ namespace itk
 
     typename OutputImageType::Pointer m_LabelImage;
     double m_Beta;
-    int m_NumThreads;
+    int m_NumberOfThreads;
     double m_Tolerance;
     int m_MaximumNumberOfIterations;
     bool m_WriteBackground;

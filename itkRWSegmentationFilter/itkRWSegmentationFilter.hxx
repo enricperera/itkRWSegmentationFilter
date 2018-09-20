@@ -20,6 +20,9 @@
 #ifndef itkRWSegmentationFilter_hxx
 #define itkRWSegmentationFilter_hxx
 
+#include <itkImageRegionIterator.h>
+#include <itkImageRegionConstIterator.h>
+
 #include <vector>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -342,10 +345,10 @@ namespace itk
     Eigen::Matrix<float , Eigen::Dynamic , Eigen::Dynamic> probabilities(unmarkedLength, totalLabels -1);
 
     // Allow multithreading. For the moment limited to 8 threads.
-    if ( m_NumThreads > 0 && m_NumThreads < 9 )
+    if ( m_NumberOfThreads > 0 && m_NumberOfThreads < 9 )
     {
-      omp_set_num_threads( m_NumThreads );
-      Eigen::setNbThreads( m_NumThreads );
+      omp_set_num_threads( m_NumberOfThreads );
+      Eigen::setNbThreads( m_NumberOfThreads );
     }
     else
     {
@@ -444,7 +447,7 @@ namespace itk
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "Beta: " << m_Beta << std::endl;
-    os << indent << "NumThreads: " << m_NumThreads << std::endl;
+    os << indent << "NumberOfThreads: " << m_NumberOfThreads << std::endl;
     os << indent << "Tolerance: " << m_Tolerance << std::endl;
     os << indent << "MaximumNumberOfIterations: " << m_MaximumNumberOfIterations << std::endl;
     os << indent << "WriteBackground: " << m_WriteBackground << std::endl;

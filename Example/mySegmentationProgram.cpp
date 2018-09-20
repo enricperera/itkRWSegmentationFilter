@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
   {
       std::cerr << "Missing Parameters " << std::endl;
       std::cerr << "Usage: " << argv[0];
-      std::cerr << "InputImage LabelImage OutputImageName [Beta] " << std::endl;
+      std::cerr << " InputImage LabelImage OutputImageName [Beta] " << std::endl;
   return 1;
   }
   
