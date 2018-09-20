@@ -195,21 +195,13 @@ namespace itk
     marked.clear();
 
     /////////////////////// Build Laplacian matrix /////////////////////////////
-    
-    float spacingFactor = 0;
-    for (int i = 0 ; i != OutputImageType::ImageDimension ; ++i)
-    {
-      spacingFactor += pow( this->GetInput()->GetSpacing()[i] , 2 );
-    }
-    spacingFactor = sqrt(spacingFactor);
-
     // Normalize intensity gradient over image spacing
     std::vector< float > spacing;
     typename InputImageType::SpacingType space = this->GetInput()->GetSpacing();
     if ( OutputImageType::ImageDimension == 2 )
-      spacing = { spacingFactor/space[1] , spacingFactor/space[0] , spacingFactor/space[0] , spacingFactor/space[1] };
+      spacing = { space[1] , space[0] , space[0] , space[1] };
     else if ( OutputImageType::ImageDimension == 3 )
-      spacing = { spacingFactor/space[2] , spacingFactor/space[1] , spacingFactor/space[0] , spacingFactor/space[0] , spacingFactor/space[1] , spacingFactor/space[2] };
+      spacing = { space[2] , space[1] , space[0] , space[0] , space[1] , space[2] };
 
     std::vector< int > neighbors;
     int x = regionCrop.GetSize()[0];
@@ -243,7 +235,7 @@ namespace itk
           if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes && labels.at( neighbors.at(i) ) == 0 )
           {
             valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
-            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
+            w = (exp( -m_Beta*pow( (valNode - valNeighbor)/spacing.at(i) , 2 )) + 1e-6 ); // Intensity gradient following a Gaussian function
             //  Columns of BT correspond to marked nodes, rows to unmarked
             BT.insert( neighbors.at(i) - previousFound.at( neighbors.at(i) ) , node - previousFound.at( node )) = -w; 
           }          
@@ -283,7 +275,7 @@ namespace itk
           if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes && labels.at( neighbors.at(i) ) != 0 )
           {
             valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
-            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
+            w = (exp( -m_Beta*pow( (valNode - valNeighbor)/spacing.at(i) , 2 )) + 1e-6 ); // Intensity gradient following a Gaussian function
             //  Columns of BT correspond to marked nodes, rows to unmarked
             BT.insert( node - previousFound.at( node ) , neighbors.at(i) - previousFound.at( neighbors.at(i) ) ) = -w; 
           }          
@@ -320,7 +312,7 @@ namespace itk
         if ( neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes )
         {
           valNeighbor = nodes.at( neighbors.at(i) ); // Intensity of neighbor pixel
-            w = (exp( -m_Beta*pow( valNode - valNeighbor , 2 )) + 1e-6 )* spacing.at(i); // Intensity gradient following a Gaussian function
+            w = (exp( -m_Beta*pow( (valNode - valNeighbor)/spacing.at(i) , 2 )) + 1e-6 ); // Intensity gradient following a Gaussian function
           degree += w; // Sum of the weights
           //  Columns of Lu correspond to unmarked nodes
           if ( labels.at( neighbors.at(i) ) == 0) // If neighbor is an unmarked node, build Lu
