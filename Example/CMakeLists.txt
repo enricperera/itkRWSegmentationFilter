@@ -11,5 +11,5 @@ INCLUDE(${ITK_USE_FILE})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-add_executable(mySegmentationProgram mySegmentationProgram.cpp ../itkRWSegmentationFilter/itkRWSegmentationFilter.h )
+add_executable(mySegmentationProgram MACOSX_BUNDLE mySegmentationProgram.cpp ../itkRWSegmentationFilter/itkRWSegmentationFilter.h )
 target_link_libraries(mySegmentationProgram ${ITK_LIBRARIES} )

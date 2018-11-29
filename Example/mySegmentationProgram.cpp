@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
   {
       std::cerr << "Missing Parameters " << std::endl;
       std::cerr << "Usage: " << argv[0];
-      std::cerr << " InputImage LabelImage OutputImageName [Beta] " << std::endl;
+      std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads] " << std::endl;
   return 1;
   }
   
@@ -56,7 +56,8 @@ int main( int argc, char *argv[] )
   RWFilter->SetLabelImage( readerLabel->GetOutput() );
   if (argv[4])
     RWFilter->SetBeta( atof(argv[4]) );
-  // RWFilter->SetNumberOfThreads( 8 );
+  if (argv[5])
+    RWFilter->SetNumberOfThreads( atof(argv[5]) );
   // RWFilter->SetWriteBackground( false );
 
   // Set writer and write image
