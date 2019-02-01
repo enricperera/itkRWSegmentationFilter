@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
   {
       std::cerr << "Missing Parameters " << std::endl;
       std::cerr << "Usage: " << argv[0];
-      std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads] " << std::endl;
+      std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads] [maxIterations]" << std::endl;
   return 1;
   }
   
@@ -58,7 +58,8 @@ int main( int argc, char *argv[] )
     RWFilter->SetBeta( atof(argv[4]) );
   if (argv[5])
     RWFilter->SetNumberOfThreads( atof(argv[5]) );
-  // RWFilter->SetWriteBackground( false );
+  if (argv[6])
+    RWFilter->SetMaximumNumberOfIterations( atoi(argv[6]) );
 
   // Set writer and write image
   typedef  itk::ImageFileWriter<  LabelImageType  > WriterType;
