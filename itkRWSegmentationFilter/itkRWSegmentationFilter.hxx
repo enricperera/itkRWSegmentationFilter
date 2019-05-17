@@ -174,7 +174,11 @@ void RWSegmentationFilter<TInputImage, TOutputImage>::GenerateData()
   std::sort(nameLabels->begin(), nameLabels->end());
 
   int totalLabels = nameLabels->size();
-  // totalLabels += 1;
+
+  if (m_SolveForAllLabels)
+  {
+    totalLabels += 1;
+  }
 
   // Linear system: Lu * X = -BT * M
   // Convert marked (M) into a Eigen::Sparse matrix markedRHS. Needed for the computation of -BT * M (Eigen::SparseMatrix * Eigen::SparseMatrix)
@@ -275,7 +279,7 @@ void RWSegmentationFilter<TInputImage, TOutputImage>::GenerateData()
         // Make sure all the neighbors computed fall within the bounding box dimension
         if (neighbors.at(i) >= 0 && neighbors.at(i) < totalNodes && labels->at(neighbors.at(i)) != 0)
         {
-          valNeighbor = nodes->at(neighbors.at(i));                                     // Intensity of neighbor pixel
+          valNeighbor = nodes->at(neighbors.at(i));                                    // Intensity of neighbor pixel
           w = (exp(-m_Beta * pow((valNode - valNeighbor) / spacing.at(i), 2)) + 1e-6); // Intensity gradient following a Gaussian function
           //  Columns of BT correspond to marked nodes, rows to unmarked
           BT->insert(node - previousFound->at(node), neighbors.at(i) - previousFound->at(neighbors.at(i))) = -w;
@@ -393,8 +397,7 @@ void RWSegmentationFilter<TInputImage, TOutputImage>::GenerateData()
   probabilities->resize(0, 0);
   delete probabilities;
 
-std::cout << "HI" << std::endl;
-
+  std::cout << "HI" << std::endl;
 
   int valBackground;
   if (!m_WriteBackground)
@@ -435,7 +438,6 @@ std::cout << "HI" << std::endl;
   }
 
   std::cout << "HI2" << std::endl;
-
 
   labels->clear();
   RWLabels->clear();

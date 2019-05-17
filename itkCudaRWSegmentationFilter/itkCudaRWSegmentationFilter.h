@@ -65,9 +65,14 @@ public:
   itkGetMacro(WriteBackground, bool);
   itkBooleanMacro(WriteBackground);
 
+  itkSetMacro(SolveForAllLabels, bool);
+  itkGetMacro(SolveForAllLabels, bool);
+  itkBooleanMacro(SolveForAllLabels);
+
 protected:
   CudaRWSegmentationFilter() : m_LabelImage(nullptr), m_Beta(1), m_Tolerance(1e-3),
-                               m_MaximumNumberOfIterations(500), m_WriteBackground(true) {}
+                               m_MaximumNumberOfIterations(500), m_WriteBackground(true),
+                               m_SolveForAllLabels(false) {}
 
   virtual ~CudaRWSegmentationFilter() {}
   void PrintSelf(std::ostream &os, Indent indent) const ITK_OVERRIDE;
@@ -87,6 +92,7 @@ private:
   double m_Tolerance;
   int m_MaximumNumberOfIterations;
   bool m_WriteBackground;
+  bool m_SolveForAllLabels;
 
   float *cooValAdev, *cooValAdevM, *xdev, *r, *r_tld, *p, *p_hat, *s, *s_hat, *t, *v;
   float bnrm2, snrm2, error, alpha, beta, omega, rho, rho_1, resid;

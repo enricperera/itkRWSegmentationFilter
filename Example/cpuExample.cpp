@@ -22,58 +22,58 @@
 #include <itkImageFileWriter.h>
 #include "../itkRWSegmentationFilter/itkRWSegmentationFilter.h"
 
-typedef     float               InputPixelType;
-const       int                 Dimension = 3;
-typedef     itk::Image< InputPixelType, Dimension >  InputImageType;
+typedef float InputPixelType;
+const int Dimension = 3;
+typedef itk::Image<InputPixelType, Dimension> InputImageType;
 
-typedef     unsigned char       LabelPixelType;
-typedef     itk::Image< LabelPixelType , Dimension >  LabelImageType;
+typedef unsigned char LabelPixelType;
+typedef itk::Image<LabelPixelType, Dimension> LabelImageType;
 
-int main( int argc, char *argv[] )
+int main(int argc, char *argv[])
 {
-  if( argc < 4 )
+  if (argc < 4)
   {
-      std::cerr << "Missing Parameters " << std::endl;
-      std::cerr << "Usage: " << argv[0];
-      std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads]" << std::endl;
-  return 1;
+    std::cerr << "Missing Parameters " << std::endl;
+    std::cerr << "Usage: " << argv[0];
+    std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads]" << std::endl;
+    return 1;
   }
-  
+
   // Define image readers and load original image and label image
-  typedef  itk::ImageFileReader< InputImageType > ImageReaderType;
+  typedef itk::ImageFileReader<InputImageType> ImageReaderType;
   ImageReaderType::Pointer readerImage = ImageReaderType::New();
-  readerImage->SetFileName( argv[1] ); // Set input image
+  readerImage->SetFileName(argv[1]); // Set input image
   readerImage->Update();
 
-  typedef  itk::ImageFileReader< LabelImageType > LabelReaderType;
+  typedef itk::ImageFileReader<LabelImageType> LabelReaderType;
   LabelReaderType::Pointer readerLabel = LabelReaderType::New();
-  readerLabel->SetFileName( argv[2] ); // Set label image
+  readerLabel->SetFileName(argv[2]); // Set label image
   readerLabel->Update();
 
-  typedef  itk::RWSegmentationFilter< InputImageType , LabelImageType > RWFilterType;
+  typedef itk::RWSegmentationFilter<InputImageType, LabelImageType> RWFilterType;
   RWFilterType::Pointer RWFilter = RWFilterType::New();
-  RWFilter->SetInput( readerImage->GetOutput() );
-  RWFilter->SetLabelImage( readerLabel->GetOutput() );
+  RWFilter->SetInput(readerImage->GetOutput());
+  RWFilter->SetLabelImage(readerLabel->GetOutput());
   RWFilter->WriteBackgroundOff();
-  
+
   if (argv[4])
-    RWFilter->SetBeta( atof(argv[4]) );
+    RWFilter->SetBeta(atof(argv[4]));
   if (argv[5])
-    RWFilter->SetNumberOfThreads( atof(argv[5]) );
+    RWFilter->SetNumberOfThreads(atof(argv[5]));
 
   RWFilter->Update();
 
   // Set writer and write image
-  typedef  itk::ImageFileWriter<  LabelImageType  > WriterType;
+  typedef itk::ImageFileWriter<LabelImageType> WriterType;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( argv[3] );
-  writer->SetInput( RWFilter->GetOutput() );
+  writer->SetFileName(argv[3]);
+  writer->SetInput(RWFilter->GetOutput());
 
   try
   {
     writer->Update();
   }
-  catch( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject &excep)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;

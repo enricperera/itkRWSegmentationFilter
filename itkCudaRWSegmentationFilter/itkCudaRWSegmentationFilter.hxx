@@ -182,8 +182,10 @@ void CudaRWSegmentationFilter<TInputImage, TOutputImage>::GenerateData()
   std::sort(nameLabels->begin(), nameLabels->end());
 
   int totalLabels = nameLabels->size();
-  // totalLabels += 1;
-
+  if (m_SolveForAllLabels)
+  {
+    totalLabels += 1;
+  }
   // Linear system: Lu * X = -BT * M
   // Convert marked (M) into a Eigen::Sparse matrix markedRHS. Needed for the computation of -BT * M (Eigen::SparseMatrix * Eigen::SparseMatrix)
   Eigen::SparseMatrix<float, Eigen::ColMajor> *markedRHS = new Eigen::SparseMatrix<float, Eigen::ColMajor>(markedLength, totalLabels - 1);

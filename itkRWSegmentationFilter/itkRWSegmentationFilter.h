@@ -25,69 +25,71 @@
 
 namespace itk
 {
-  template< typename TInputImage, typename TOutputImage >
-  class RWSegmentationFilter:
-  public ImageToImageFilter< TInputImage, TOutputImage >
-  {
-  public:
-    /** Standard class typedefs. */
-    typedef RWSegmentationFilter                            Self;
-    typedef ImageToImageFilter< TInputImage, TOutputImage > Superclass;
-    typedef SmartPointer< Self >                            Pointer;
-    typedef SmartPointer< const Self >                      ConstPointer;
+template <typename TInputImage, typename TOutputImage>
+class RWSegmentationFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+{
+public:
+  /** Standard class typedefs. */
+  typedef RWSegmentationFilter Self;
+  typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
 
-    /** Method for creation through the object factory. */
-    itkNewMacro(Self);
+  /** Method for creation through the object factory. */
+  itkNewMacro(Self);
 
-    /** Run-time type information (and related methods). */
-    itkTypeMacro(RWSegmentationFilter, ImageToImageFilter);
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(RWSegmentationFilter, ImageToImageFilter);
 
-    /** Image type information. */
-    typedef TInputImage  InputImageType;
-    typedef TOutputImage OutputImageType;
+  /** Image type information. */
+  typedef TInputImage InputImageType;
+  typedef TOutputImage OutputImageType;
 
-    itkSetMacro(LabelImage, typename OutputImageType::Pointer);
-    itkGetMacro(LabelImage, typename OutputImageType::Pointer);
+  itkSetMacro(LabelImage, typename OutputImageType::Pointer);
+  itkGetMacro(LabelImage, typename OutputImageType::Pointer);
 
-    itkSetMacro(Beta, double);
-    itkGetMacro(Beta, double);
+  itkSetMacro(Beta, double);
+  itkGetMacro(Beta, double);
 
-    itkSetMacro(NumberOfThreads, int);
-    itkGetMacro(NumberOfThreads, int);
+  itkSetMacro(NumberOfThreads, int);
+  itkGetMacro(NumberOfThreads, int);
 
-    itkSetMacro(Tolerance, double);
-    itkGetMacro(Tolerance, double);
+  itkSetMacro(Tolerance, double);
+  itkGetMacro(Tolerance, double);
 
-    itkSetMacro(MaximumNumberOfIterations, int);
-    itkGetMacro(MaximumNumberOfIterations, int);
+  itkSetMacro(MaximumNumberOfIterations, int);
+  itkGetMacro(MaximumNumberOfIterations, int);
 
-    itkSetMacro(WriteBackground, bool);
-    itkGetMacro(WriteBackground, bool);
-    itkBooleanMacro(WriteBackground);
+  itkSetMacro(WriteBackground, bool);
+  itkGetMacro(WriteBackground, bool);
+  itkBooleanMacro(WriteBackground);
 
-  protected:
-    RWSegmentationFilter() :
-      m_LabelImage(nullptr), m_Beta(1), m_NumberOfThreads(1), m_Tolerance(1e-3),
-      m_MaximumNumberOfIterations(100), m_WriteBackground(true) {}
+  itkSetMacro(SolveForAllLabels, bool);
+  itkGetMacro(SolveForAllLabels, bool);
+  itkBooleanMacro(SolveForAllLabels);
 
-    virtual ~RWSegmentationFilter() {}
-    void PrintSelf(std::ostream & os, Indent indent) const ITK_OVERRIDE;
+protected:
+  RWSegmentationFilter() : m_LabelImage(nullptr), m_Beta(1), m_NumberOfThreads(1), m_Tolerance(1e-3),
+                           m_MaximumNumberOfIterations(100), m_WriteBackground(true), m_SolveForAllLabels(false) {}
 
-    /** Does the actual work */
-    void GenerateData() ITK_OVERRIDE;
+  virtual ~RWSegmentationFilter() {}
+  void PrintSelf(std::ostream &os, Indent indent) const ITK_OVERRIDE;
 
-  private:
-    RWSegmentationFilter(const Self &) ITK_DELETE_FUNCTION;
-    void operator=(const Self &) ITK_DELETE_FUNCTION;
+  /** Does the actual work */
+  void GenerateData() ITK_OVERRIDE;
 
-    typename OutputImageType::Pointer m_LabelImage;
-    double m_Beta;
-    int m_NumberOfThreads;
-    double m_Tolerance;
-    int m_MaximumNumberOfIterations;
-    bool m_WriteBackground;
+private:
+  RWSegmentationFilter(const Self &) ITK_DELETE_FUNCTION;
+  void operator=(const Self &) ITK_DELETE_FUNCTION;
 
-  };
+  typename OutputImageType::Pointer m_LabelImage;
+  double m_Beta;
+  int m_NumberOfThreads;
+  double m_Tolerance;
+  int m_MaximumNumberOfIterations;
+  bool m_WriteBackground;
+  bool m_SolveForAllLabels;
+};
 } // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
