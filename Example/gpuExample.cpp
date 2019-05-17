@@ -20,7 +20,7 @@
 #include "itkImage.h"
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
-#include "../itkRWSegmentationFilter/itkRWSegmentationFilter.h"
+#include "../itkCudaRWSegmentationFilter/itkCudaRWSegmentationFilter.h"
 
 typedef     float               InputPixelType;
 const       int                 Dimension = 3;
@@ -35,7 +35,7 @@ int main( int argc, char *argv[] )
   {
       std::cerr << "Missing Parameters " << std::endl;
       std::cerr << "Usage: " << argv[0];
-      std::cerr << " InputImage LabelImage OutputImageName [Beta] [threads] [maxIterations] [writeBackground]" << std::endl;
+      std::cerr << " InputImage LabelImage OutputImageName [Beta] " << std::endl;
   return 1;
   }
   
@@ -50,19 +50,17 @@ int main( int argc, char *argv[] )
   readerLabel->SetFileName( argv[2] ); // Set label image
   readerLabel->Update();
 
-  typedef  itk::RWSegmentationFilter< InputImageType , LabelImageType > RWFilterType;
+  typedef  itk::CudaRWSegmentationFilter< InputImageType , LabelImageType > RWFilterType;
   RWFilterType::Pointer RWFilter = RWFilterType::New();
   RWFilter->SetInput( readerImage->GetOutput() );
   RWFilter->SetLabelImage( readerLabel->GetOutput() );
+  RWFilter->WriteBackgroundOff();
+
   if (argv[4])
     RWFilter->SetBeta( atof(argv[4]) );
-  if (argv[5])
-    RWFilter->SetNumberOfThreads( atof(argv[5]) );
-  if (argv[6])
-    RWFilter->SetMaximumNumberOfIterations( atoi(argv[6]) );
-  RWFilter->WriteBackgroundOff();
-  if (argv[7])
-    RWFilter->WriteBackgroundOn();
+
+  RWFilter->Update();
+
 
   // Set writer and write image
   typedef  itk::ImageFileWriter<  LabelImageType  > WriterType;
