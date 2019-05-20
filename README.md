@@ -29,10 +29,14 @@
   if the region corresponding to the highest label will be assigned 
   its label or a value of 0, useful when considering that the last 
   label is background and its segmentation is irrelevant, default true).
+  To speed up the computation, the algorithm computes the segmentation
+  for L-1 labels, and obtains the last by subtraction. If a slightly 
+  finer result is desired at the expense of some computation time, 
+  SolveForAllLabels can be set to true (default false).
 
   Although it is an itk-like filter, it requires of Eigen3 libraries
   and openMP for the CPU approach, and CUDA for the GPU. Following you 
-  can find the homepages for thes libraries, and the versions which have 
+  can find the homepages for these libraries, and the versions which have 
   been used during the development, although other versions might also 
   work.
 
