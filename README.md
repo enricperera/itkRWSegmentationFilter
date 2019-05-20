@@ -6,11 +6,11 @@
 
   Two filters are provided: itkRWSegmentationFilter and 
   itkCudaRWSegmentationFilter, the former is processed in the CPU and 
-  the latter benefiets also from GPU computation (a CUDA compatible 
+  the latter benefits also from GPU computation (a CUDA compatible 
   graphic card is required).
   
   Given an input image (set by SetInput(TInputImage*)), and a label 
-  image containing the seed points corresponing to different regions
+  image containing the seed points corresponding to different regions
   (set by SetLabelImage(TOutputImage*)), returns a segmentation image
   (TOutputImage* GetOutput()). The label image is required, if 
   SetLabelImage(TOutputImage*) is not called before calling Update(),
@@ -32,8 +32,8 @@
 
   Although it is an itk-like filter, it requires of Eigen3 libraries
   and openMP for the CPU approach, and CUDA for the GPU. Following you 
-  can find the hompages for thes libraries, and the versions which have 
-  been used during the developement, although other versions might also 
+  can find the homepages for thes libraries, and the versions which have 
+  been used during the development, although other versions might also 
   work.
 
   - ITK (4.12): https://github.com/InsightSoftwareConsortium/ITK
@@ -42,7 +42,7 @@
   - CUDA Toolkit (9.1): https://developer.nvidia.com/cuda-toolkit 
 
   [1] L. Grady, “Random Walks for Image Segmentation,”IEEE 
-      Transactionson Pattern Analysis and Machine Intelligence, 
+      Transactions on Pattern Analysis and Machine Intelligence, 
       vol. 28, no. 11, pp. 1768–1783, nov 2006.
 
 
@@ -53,7 +53,7 @@
     git clone https://github.com/enricperera/itkRWSegmentationFilter.git
     cd itkRWSegmentationFilter
 
-  Creat a new "build" directory. Configure and compile source.
+  Create a new "build" directory. Configure and compile source.
 
     mkdir build
     cmake ../Example
